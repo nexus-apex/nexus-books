@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Payments | NexusBooks{% endblock %}
+{% block page_title %}Payments{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search payments...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Method</option>
+      <option value="bank_transfer" {% if status_filter == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+      <option value="cash" {% if status_filter == 'cash' %}selected{% endif %}>Cash</option>
+      <option value="card" {% if status_filter == 'card' %}selected{% endif %}>Card</option>
+      <option value="upi" {% if status_filter == 'upi' %}selected{% endif %}>UPI</option>
+      <option value="cheque" {% if status_filter == 'cheque' %}selected{% endif %}>Cheque</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/payments/create/" class="btn btn-primary">+ New Payment</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Reference</th><th>Payer</th><th>Amount</th><th>Method</th><th>Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/payments/{{ r.pk }}/edit/"><strong>{{ r.reference }}</strong></a></td>
+        <td>{{ r.payer|default:"-" }}</td>
+        <td>{{ r.amount|floatformat:2 }}</td>
+        <td><span class="badge badge-blue">{{ r.get_method_display }}</span></td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/payments/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/payments/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No payments found.</p>
+    <a href="/payments/create/" class="btn btn-primary" style="margin-top:1rem">Create Payment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
