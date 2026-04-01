@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Accounts | NexusBooks{% endblock %}
+{% block page_title %}Accounts{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search accounts...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Account Type</option>
+      <option value="asset" {% if status_filter == 'asset' %}selected{% endif %}>Asset</option>
+      <option value="liability" {% if status_filter == 'liability' %}selected{% endif %}>Liability</option>
+      <option value="equity" {% if status_filter == 'equity' %}selected{% endif %}>Equity</option>
+      <option value="revenue" {% if status_filter == 'revenue' %}selected{% endif %}>Revenue</option>
+      <option value="expense" {% if status_filter == 'expense' %}selected{% endif %}>Expense</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/accounts/create/" class="btn btn-primary">+ New Account</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Account Type</th><th>Code</th><th>Balance</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/accounts/{{ r.pk }}/edit/"><strong>{{ r.name }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_account_type_display }}</span></td>
+        <td>{{ r.code|default:"-" }}</td>
+        <td>{{ r.balance|floatformat:2 }}</td>
+        <td class="actions">
+          <a href="/accounts/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/accounts/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No accounts found.</p>
+    <a href="/accounts/create/" class="btn btn-primary" style="margin-top:1rem">Create Account</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
