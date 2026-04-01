@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Records | NexusBooks{% endblock %}
+{% block page_title %}Records{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search records...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+      <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+      <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/records/create/" class="btn btn-primary" style="margin-left:1rem">+ New Record</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Amount</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><strong>{{ r.name }}</strong></td>
+        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.phone|default:"-" }}</td>
+        <td><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
+        <td>{{ r.amount }}</td>
+        <td class="actions">
+          <a href="/records/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/records/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete this record?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records found.</p>
+    <a href="/records/create/" class="btn btn-primary" style="margin-top:1rem">Create Record</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
