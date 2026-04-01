@@ -4,41 +4,38 @@
 {% block content %}
 <div class="stats-grid">
   <div class="stat-card">
-    <div class="stat-label">Total Records</div>
-    <div class="stat-value">{{ total }}</div>
+    <div class="stat-label">Total Accounts</div>
+    <div class="stat-value">{{ account_count }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Active</div>
-    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ active }}</div>
+    <div class="stat-label">Total Invoices</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ invoice_count }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Pending</div>
-    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ pending }}</div>
+    <div class="stat-label">Total Payments</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ payment_count }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">Inactive</div>
-    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ inactive }}</div>
+    <div class="stat-label">Total Balance</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ account_total_balance|floatformat:0 }}</div>
   </div>
 </div>
 
 <div class="card">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-    <h3>Recent Records</h3>
-    <a href="/records/create/" class="btn btn-primary btn-sm">+ New Record</a>
+    <h3>Recent Accounts</h3>
+    <a href="/accounts/create/" class="btn btn-primary btn-sm">+ New Account</a>
   </div>
   {% if recent %}
   <table>
     <thead>
-      <tr><th>Name</th><th>Email</th><th>Status</th><th>Amount</th><th>Date</th></tr>
+      <tr><th>Name</th><th>Account Type</th><th>Code</th><th>Balance</th><th>Created</th></tr>
     </thead>
     <tbody>
       {% for r in recent %}
       <tr>
-        <td><a href="/records/{{ r.pk }}/edit/">{{ r.name }}</a></td>
-        <td style="color:var(--muted)">{{ r.email|default:"-" }}</td>
-        <td><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
-        <td>{{ r.amount }}</td>
-        <td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+        <td><a href="/accounts/{{ r.pk }}/edit/">{{ r.name }}</a></td>
+        <td><span class="badge badge-blue">{{ r.get_account_type_display }}</span></td><td>{{ r.code|default:"-" }}</td><td>{{ r.balance|floatformat:2 }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -46,7 +43,7 @@
   {% else %}
   <div class="empty">
     <p>No records yet.</p>
-    <a href="/records/create/" class="btn btn-primary" style="margin-top:1rem">Create First Record</a>
+    <a href="/accounts/create/" class="btn btn-primary" style="margin-top:1rem">Create First Account</a>
   </div>
   {% endif %}
 </div>
