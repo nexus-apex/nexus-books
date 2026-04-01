@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Payment | NexusBooks{% endblock %}
+{% block page_title %}{% if editing %}Edit Payment{% else %}New Payment{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Reference</label>
+        <input type="text" name="reference" value="{{ record.reference|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Payer</label>
+        <input type="text" name="payer" value="{{ record.payer|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" step="0.01" name="amount" value="{{ record.amount|default:'0' }}">
+      </div>
+      <div class="form-group">
+        <label>Method</label>
+        <select name="method">
+          <option value="bank_transfer" {% if record.method == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+          <option value="cash" {% if record.method == 'cash' %}selected{% endif %}>Cash</option>
+          <option value="card" {% if record.method == 'card' %}selected{% endif %}>Card</option>
+          <option value="upi" {% if record.method == 'upi' %}selected{% endif %}>UPI</option>
+          <option value="cheque" {% if record.method == 'cheque' %}selected{% endif %}>Cheque</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" name="date" value="{{ record.date|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Invoice Ref</label>
+        <input type="text" name="invoice_ref" value="{{ record.invoice_ref|default:'' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea name="notes">{{ record.notes|default:'' }}</textarea>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Payment</button>
+      <a href="/payments/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
